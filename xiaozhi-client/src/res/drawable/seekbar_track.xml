@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  视频底栏进度轨（T1）。
+  系统默认的 ProgressBar 样式太细、颜色反差小，在花画面上几乎看不出进度，
+  所以自己画：6dp 圆角细轨，已播部分品牌绿，未播部分半透明白。
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@android:id/background"
+        android:gravity="center_vertical"
+        android:height="6dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp" />
+            <solid android:color="#3DFFFFFF" />
+        </shape>
+    </item>
+
+    <!-- 缓冲进度：本地/SMB 直读用不上，但留着让样式完整 -->
+    <item
+        android:id="@android:id/secondaryProgress"
+        android:gravity="center_vertical"
+        android:height="6dp">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="3dp" />
+                <solid android:color="#66FFFFFF" />
+            </shape>
+        </clip>
+    </item>
+
+    <item
+        android:id="@android:id/progress"
+        android:gravity="center_vertical"
+        android:height="6dp">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="3dp" />
+                <solid android:color="@color/brand" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

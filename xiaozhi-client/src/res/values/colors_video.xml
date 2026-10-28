@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 视频页底部常驻栏底衬：不透明度高一些，否则花画面上字幕看不清 -->
+    <color name="video_bar">#E6000000</color>
+    <color name="video_pill">#33FFFFFF</color>
+    <color name="video_text">#FFFFFF</color>
+    <color name="video_text_dim">#B3FFFFFF</color>
+    <!-- 字幕底板：压在画面上，比控制栏淡一点，别把画面切出硬边 -->
+    <color name="video_caption_bg">#C0000000</color>
+</resources>

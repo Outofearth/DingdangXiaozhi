@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  次要按钮（设置页的「应用目录」「重新扫描」「清理」「记录」「设置」等）。
+
+  按下态原来只是 #F0F0F0 → #DCDCDC，灰变灰，在这台设备的屏幕上几乎看不出
+  按到没有（点了没反应、又点一次，很容易点重）。现在改成浅品牌绿底 + 柔和绿描边：
+  既明确"按下去了"，又和全套绿配色是一家的，不会像换了个控件。
+
+  文字颜色各调用点自己定（深灰/品牌绿/红），浅绿底对三种都够看。
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/brand_soft" />
+            <corners android:radius="24dp" />
+            <stroke android:width="1dp" android:color="#A9DFC1" />
+            <padding android:left="18dp" android:top="9dp" android:right="18dp" android:bottom="9dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#F0F0F0" />
+            <corners android:radius="24dp" />
+            <stroke android:width="1dp" android:color="#D8D8D8" />
+            <padding android:left="18dp" android:top="9dp" android:right="18dp" android:bottom="9dp" />
+        </shape>
+    </item>
+</selector>

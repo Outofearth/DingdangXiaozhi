@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  字幕底板：半透明黑 + 圆角。
+  字幕要压在画面上（真字幕就该这样），所以必须自带底色，否则浅色画面上白字看不清。
+  透明度比控制栏（#E6000000）低一点：字幕是"看"的，不是"操作"的，
+  不该把画面切出一个硬边。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/video_caption_bg" />
+    <corners android:radius="14dp" />
+</shape>

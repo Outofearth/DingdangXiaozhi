@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  按住说话圆钮的三态：
+    pressed  手指正按着 → 深绿实心 + 加粗亮环（最快、最直接的"按到了"反馈）
+    selected 正在聆听（松手后走自动收尾，或连续对话自动开麦）→ 深绿渐变 + 亮环
+    default  待机 → 品牌绿渐变 + 淡白环
+
+  注意：只写 state_pressed 是不够的。MainActivity 里这个 Button 的 OnTouchListener
+  直接 return true 接管了整条触摸序列，View 自己的 onTouchEvent 不会跑，pressed
+  状态就不会被设上 —— 所以那边必须显式 setPressed()，否则本文件第一段形同虚设
+  （这就是「按下去颜色一点没变」的真正原因）。
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <solid android:color="#04763A" />
+            <stroke android:width="9dp" android:color="#59FFFFFF" />
+        </shape>
+    </item>
+    <item android:state_selected="true">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="270"
+                android:startColor="#0EA65C"
+                android:endColor="#04763A" />
+            <stroke android:width="9dp" android:color="#66FFFFFF" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:angle="270"
+                android:startColor="#22C55E"
+                android:endColor="#05974A" />
+            <stroke android:width="6dp" android:color="#40FFFFFF" />
+        </shape>
+    </item>
+</selector>

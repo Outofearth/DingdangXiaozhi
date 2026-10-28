@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  待机悬浮入口的按钮底：和叮当待机屏底部那 4 个圆形 dock 图标同一套观感——
+  圆形、彩色、有柔和投影、外圈一道半透明白边（玻璃感）。
+
+  尺寸约定：本 drawable 的「可视圆」比 View 本体小 8dp（四周各留 8dp 给投影），
+  所以 View 用 88dp 时，圆正好是 72dp，和系统 dock 图标大小相当。
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1) 柔和投影：径向渐变由内到外淡出，避免硬边黑影 -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="46dp"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:startColor="#3D000000"
+                android:centerColor="#17000000"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+
+    <!-- 2) 主体圆：上浅下深的绿色渐变（小智的品牌色） -->
+    <item
+        android:bottom="8dp"
+        android:left="8dp"
+        android:right="8dp"
+        android:top="8dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="270"
+                android:endColor="#06A05A"
+                android:startColor="#5BDC92"
+                android:type="linear" />
+            <stroke
+                android:width="1.5dp"
+                android:color="#59FFFFFF" />
+        </shape>
+    </item>
+
+    <!-- 3) 顶部高光：一小片白色渐变，让圆看起来更立体 -->
+    <item
+        android:bottom="50dp"
+        android:left="18dp"
+        android:right="18dp"
+        android:top="14dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="270"
+                android:endColor="#00FFFFFF"
+                android:startColor="#4DFFFFFF"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list>

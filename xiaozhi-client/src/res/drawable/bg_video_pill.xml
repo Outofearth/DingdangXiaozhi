@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  视频页底部「退出」这类胶囊按钮。原来是静态 shape，按下去没有任何反馈
+  （画面在动、又没声音提示，很容易以为没点着而连点两下）。
+  现在按下换成品牌绿半透明，既明显又不破坏全屏画面的观感。
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#8007C160" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/video_pill" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+</selector>

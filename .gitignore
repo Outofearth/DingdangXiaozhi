@@ -1,0 +1,40 @@
+# ---- 构建产物（本地编译后自动生成，不入库）----
+build/
+build_native/
+*.apk
+*.ap_
+*.dex
+*.class
+
+# 本地暂存区：构建产物、签名、私有笔记放这里，永不提交
+_local_only/
+
+# ---- 签名材料（绝不要提交私钥）----
+*.keystore
+*.jks
+debug.keystore
+
+# ---- 第三方源码与工具链（体积大，按需自备）----
+opus-1.3.1/
+toolchain/
+build_env/
+
+# ---- 设备固件 / 全盘镜像 / 备份 ----
+*.img
+*.bin
+backup/
+*.scatter.txt
+
+# ---- 运行期产物与日志 ----
+status.txt
+olidx.tsv
+*.log
+tmp/
+
+# ---- 编辑器与系统 ----
+.idea/
+.vscode/
+*.iml
+*.swp
+.DS_Store
+Thumbs.db

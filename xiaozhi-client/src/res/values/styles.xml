@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+      统一开关配色（设置页所有 Switch 都挂这个 style）。
+
+      为什么需要：App 没有自定义主题，Switch 吃的是系统默认的 colorAccent（青绿 #009688）。
+      它跟小智的品牌绿 #07C160 并排出现时是两种绿，看着像没调好；
+      而且这台设备的屏幕偏色，青绿显得发灰，开没开不够醒目。
+
+      轨道用自绘 drawable（sw_track）：默认轨道的 tint 会被系统再乘一道约 30% 的
+      透明度，绿色淡到看不出来。小球保持系统白色，压在绿轨道上才分得清开/关。
+    -->
+    <style name="BrandSwitch">
+        <item name="android:track">@drawable/sw_track</item>
+        <item name="android:thumbTint">#FFFFFF</item>
+    </style>
+
+</resources>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 外观：左右排列。左侧聊天记录，右侧操作面板（麦克风状态 + 按住说话）。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_page"
+    android:paddingBottom="56dp">
+
+    <!-- ================= 顶栏 ================= -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@color/bg_topbar"
+        android:gravity="center_vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="14dp">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:text="@string/status_ready" />
+
+        <TextView
+            android:id="@+id/btn_continuous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_pill_off"
+            android:text="@string/continuous"
+            android:textSize="15sp"
+            android:textColor="@color/text_secondary"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageView
+            android:id="@+id/btn_camera"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_cam_off"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_camera"
+            android:contentDescription="@string/camera"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/btn_records"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_pill_off"
+            android:text="@string/records"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_pill_off"
+            android:text="@string/settings"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- ================= 主体：左聊天 / 右操作 ================= -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:baselineAligned="false">
+
+        <!-- 左：聊天记录 -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ScrollView
+                android:id="@+id/chat_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="18dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="true">
+
+                <LinearLayout
+                    android:id="@+id/chat_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+            <TextView
+                android:id="@+id/chat_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/text_hint"
+                android:text="对话会显示在这里\n按住右侧「按住说话」开始，或打开「连续对话」" />
+
+            <!-- 多选操作条（长按消息 → 多选 后出现，盖在聊天区底部） -->
+            <LinearLayout
+                android:id="@+id/chat_sel_bar"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_sel_bar"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="6dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/sel_count"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/brand"
+                    android:text="已选 0 条" />
+
+                <TextView
+                    android:id="@+id/sel_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_off"
+                    android:text="@string/sel_all_short"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_primary"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/sel_copy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_off"
+                    android:text="@string/sel_copy"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_primary"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/sel_export"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_off"
+                    android:text="@string/sel_export"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_primary"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/sel_del"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_off"
+                    android:text="@string/sel_del"
+                    android:textSize="13sp"
+                    android:textColor="@color/danger"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/sel_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_on"
+                    android:text="@string/sel_cancel"
+                    android:textSize="13sp"
+                    android:textColor="#FFFFFF"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/divider" />
+
+        <!-- 右：操作面板 -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:background="@color/bg_topbar"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:gravity="center_horizontal">
+
+            <!-- 麦克风状态（点击切换软件层开关） -->
+            <LinearLayout
+                android:id="@+id/mic_chip"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/mic_icon"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_mic"
+                    android:contentDescription="@string/mic_on" />
+
+                <TextView
+                    android:id="@+id/mic_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    android:text="@string/mic_on" />
+            </LinearLayout>
+
+            <!-- 按住说话（垂直居中，占满剩余空间） -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/talk"
+                    android:layout_width="176dp"
+                    android:layout_height="176dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_button"
+                    android:text="@string/talk_hint"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#ffffff" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:text="按住按钮说话\n点上方麦克风可关闭软件收音" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

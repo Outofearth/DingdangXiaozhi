@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 目录树框的滑条：系统默认滚动条在浅底上太淡（这台机器几乎看不见），
+     换成品牌绿的半透明圆角条，常驻显示（配合 fadeScrollbars=false）。
+     用户明确要求「文字框内部向上滑动浏览所有层级」，得能一眼看出还有多少内容。 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#9907C160" />
+    <corners android:radius="2dp" />
+</shape>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 微信风配色 -->
+    <color name="bg_page">#EDEDED</color>
+    <color name="bg_topbar">#F7F7F7</color>
+    <color name="card">#FFFFFF</color>
+    <color name="brand">#07C160</color>
+    <color name="brand_dark">#05974A</color>
+    <color name="brand_soft">#E8F8EF</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#8C8C8C</color>
+    <color name="text_hint">#B0B0B0</color>
+    <color name="divider">#ECECEC</color>
+    <color name="bubble_user">#95EC69</color>
+    <color name="bubble_ai">#FFFFFF</color>
+    <color name="danger">#E64340</color>
+    <color name="switch_on">#07C160</color>
+</resources>

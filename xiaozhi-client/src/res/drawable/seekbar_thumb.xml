@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  进度条拇指（T1）。触摸屏上手指比鼠标粗，20dp 白底 + 绿边比系统默认小黑点好按得多。
+  配合 SeekBar 的 26dp 高度，实际可点区域约 26dp × 全宽，够用了。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <size
+        android:width="20dp"
+        android:height="20dp" />
+    <solid android:color="#FFFFFF" />
+    <stroke
+        android:width="4dp"
+        android:color="@color/brand" />
+</shape>

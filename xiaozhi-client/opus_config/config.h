@@ -1,0 +1,21 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+#define OPUS_BUILD 1
+#define VAR_ARRAYS 1
+#define HAVE_STDINT_H 1
+#define HAVE_STDLIB_H 1
+#define HAVE_STRING_H 1
+#define HAVE_INTTYPES_H 1
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_UNISTD_H 1
+#define HAVE_LRINT 1
+#define HAVE_LRINTF 1
+#define HAVE_ALLOCA_H 0
+#define HAVE_MEMORY_H 0
+#define HAVE_DLFCN_H 0
+#define ENABLE_ASSERTIONS 0
+#define ENABLE_HARDENING 0
+#define CUSTOM_MODES 0
+#define FLOAT_APPROX 0
+#define OPUS_STACK_PROTECTOR 0
+#endif
