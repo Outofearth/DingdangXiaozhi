@@ -1741,6 +1741,35 @@ public class MainActivity extends Activity
     }
 
     /**
+     * 网盘当前这一层一个能放的都没有时，自动退回根目录。
+     *
+     * <p>什么时候会出现这种层：根上「现代民谣排行榜100首」「二胡曲谱」「流行歌曲-简谱」
+     * 这些目录里全是曲谱图片（100 个文件，0 音频、0 视频、0 子目录）。一旦停在里面，
+     * 清单里网络盘那组就永远只剩一句「另有 100 个放不了的」—— 用户看到的现象是
+     * 「网盘里的东西拿不到了」（真机实测，10-31）。
+     *
+     * <p>只退**空壳层**：这一层如果还有子目录（dirs &gt; 0），那是可以继续往下翻的正常目录，
+     * 不动它；列目录还没回来（listing 为 null）也不猜，免得把刚进去的目录又弹出来。
+     *
+     * @return 被退出的目录名；没动过返回 null
+     */
+    private String escapeEmptyNetDir() {
+        if (netDisk == null || !netDisk.enabled() || netDisk.atRoot()) return null;
+        NetDiskLibrary.Listing ls = null;
+        try {
+            ls = netDisk.listing();
+        } catch (Throwable ignore) {
+        }
+        if (ls == null) return null;
+        if (ls.playable > 0 || ls.videos > 0 || ls.dirs > 0) return null;
+        final String left = netDisk.curName();
+        netDisk.cdRoot();
+        persistStatus("网络盘「" + left + "」里没有能放的，自动回到根目录");
+        runOnUiThread(() -> addEvent("📁「" + left + "」里都是放不了的文件，已回到根目录"));
+        return left;
+    }
+
+    /**
      * 把当前目录这一层报出来（上屏本地版式 + 让云端念）。
      *
      * 复用 {@link #handleLibraryQuery}：它已经处理了「云端调工具 → 念完清单 → 静默复述字幕」，
@@ -1752,9 +1781,16 @@ public class MainActivity extends Activity
             // （本地没有 TTS，声音只能靠云端）。默认问「歌」；但进的是纯视频目录
             // （比如「Zan」里三个 mp4）时，问歌只会得到一句「这里没有音频」——
             // 那种目录要问「视频」，云端才会把片子念出来、序号也才对得上。
-            String q = "网盘里有哪些歌";
+            // 「歌」还是「视频」见下；**目录名一定要念进去**。
+            // 以前固定是「网盘里有哪些歌」，进第二个目录时云端以为「这句刚问过」，
+            // 一句工具都不调，直接复述上一层的答案（实测：进了「邓紫棋」，屏幕上 43 个，
+            // 它嘴上还在说「网盘根目录 22 个文件夹，一共 40 个」）。
+            final String where = netDisk.atRoot() ? "根目录" : netDisk.curName();
+            String q = "网盘" + (netDisk.atRoot() ? "根目录" : "「" + where + "」") + "里有哪些歌";
             NetDiskLibrary.Listing ls = netDisk.listing();
-            if (ls != null && ls.playable == 0 && ls.videos > 0) q = "网盘里有哪些视频";
+            if (ls != null && ls.playable == 0 && ls.videos > 0) {
+                q = "网盘" + (netDisk.atRoot() ? "根目录" : "「" + where + "」") + "里有哪些视频";
+            }
             handleLibraryQuery(q, true);
         } catch (Throwable t) {
             Log.e(TAG, "reportNetDir failed", t);
@@ -1823,6 +1859,10 @@ public class MainActivity extends Activity
         }
         // 这次问的是音频、视频，还是都要
         final int kind = surveyKind(s);
+        // 网盘这一层要是只剩曲谱图片（一个能放的都没有），别在这儿干耗 —— 直接退回根目录。
+        // 用户问「网络盘有哪些文件」，该听到的是根上那 22 个文件夹，而不是「你站在一个
+        // 图片目录里、这一层没有能放的」。实测他因此认定「网盘里的东西拿不到了」。
+        escapeEmptyNetDir();
         // 五个位置一起扫（本机 → 共享文件夹 → 网络盘 → 云端缓存 → 下载缓存），按类型过滤 + 去重
         final java.util.List<MediaSurvey.Entry> items = buildSurvey(kind);
         // 存下来：用户下一句很可能是「播放第 3 个」，那句话里没有任何名字可匹配
@@ -2240,6 +2280,14 @@ public class MainActivity extends Activity
         if (text == null) return false;
         final String s = text.replace(" ", "").replace("，", "").replace("。", "").replace("？", "");
         if (containsAny(s, STOP_WORDS)) return false;
+        // 播放中的「继续 / 接着 / 往下放」是控制指令，不是点播。
+        // 不挡这一下，「继续播放」会被当成一个两字名字去打分 —— 剥掉动词后剩「继续」，
+        // hasRealName 认为它有 2 个字、够格当歌名，于是撞上曲库里随便哪一首
+        // （真机实测：暂停后说「继续播放」，歌被换成了网络盘的《周末最好的50首…》）。
+        // 只在「确实有东西在放」时挡：「接着放邓紫棋」在没有播放时仍按点播处理。
+        if ((filePlaying || localPlayback || resuming || videoMode) && containsAny(s, RESUME_WORDS)) {
+            return false;
+        }
         if (!s.contains("播放") && !s.contains("放") && !s.contains("唱")
                 && !s.contains("听") && !s.contains("来一首")
                 && !s.contains("看") && !s.contains("视频")) return false;
@@ -2255,6 +2303,18 @@ public class MainActivity extends Activity
         if (localFiles != null) {
             LocalFiles.Track tk = localFiles.match(s, prefer);
             if (tk != null && playFileTrack(tk, text)) return true;
+        }
+        // 1.4) 说的是网盘里的**文件夹名**（「播放现代民谣排行榜100首」）→ 进目录，别当成歌去播。
+        // 必须挡在共享盘打分之前：共享盘里有《《宋冬野》20首民谣串烧》，跟「现代民谣排行榜100首」
+        // 共着「民谣」两个字，同音容错刚好凑到 6 分命中线 —— 于是用户点网盘的文件夹，
+        // 出来的却是共享盘里一首不相干的歌（真机实测 15:52、16:01 各一次）。
+        if (netDisk != null && netDisk.enabled()) {
+            NetDiskLibrary.Dir fd = netDisk.findDirNamed(s);
+            if (fd != null) {
+                persistStatus("网络盘：这句说的是文件夹「" + fd.name + "」，进目录");
+                enterNetDir(fd.path);
+                return true;
+            }
         }
         // 1.5) 远程音乐库：电脑上用 Windows 文件共享出去的文件夹（设置里开启后生效）
         if (remote != null && remote.enabled()) {
@@ -2411,6 +2471,9 @@ public class MainActivity extends Activity
         }
         final PlayItem it = fileQueue.get(idx);
         fileIndex = idx;
+        // 从进入「正在连接电脑 / 正在取流」这一刻就算接管：换歌期间 filePlaying 若为 false，
+        // 用户这时候喊「停止」会被当成普通提问，白等一趟云端往返。
+        filePlaying = true;
         // 换歌：先收起上一首的进度条，新曲 prepare 完再亮出来（中间那段是「正在连接…」）
         hideNowBar();
 
@@ -2566,8 +2629,15 @@ public class MainActivity extends Activity
         });
         if (!ok) {
             persistStatus("文件打不开：" + path);
+            filePlaying = false;             // 起不来就别占着「在放」的位置
             return;
         }
+        // 播完自动换歌（onFileTrackDone → nextFile → playFileAt）走的就是这条路径，
+        // 而 onFileTrackDone 里已经把 filePlaying 置 false 了。这里不补回来，就会出现
+        // 「声音在放、状态却是停」—— 之后 handleFileIntent 第一行的
+        // `if (!filePlaying) return false` 会把「暂停 / 停止 / 下一首」全部甩给云端，
+        // 云端只会嘴上答应「已经停下来了」，歌照放。
+        filePlaying = true;
         persistStatus("文件播放《" + title + "》· " + source + " · " + path);
         runOnUiThread(() -> showNowBar(title, source));
     }

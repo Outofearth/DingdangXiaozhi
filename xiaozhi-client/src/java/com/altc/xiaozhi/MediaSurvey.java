@@ -247,7 +247,10 @@ public class MediaSurvey {
                         LAST_NOTE.set("说「返回上一层」回上一层，说「回到根目录」回到最开始那 22 个文件夹。");
                     }
                 }
-                if (nd.offline()) {
+                // 只有**真的一份都没拿到**时才说「连不上」。
+                // 以前不看 ls：这一层明明有缓存清单，只要 lastError 还挂着（启动那次超时），
+                // 整组就被抹掉换成一句「网络盘连不上」，用户看到的是「网盘里的东西没了」。
+                if (ls == null && nd.offline()) {
                     head.remove(SRC_NET);
                     LAST_NOTE.set("网络盘暂时连不上（电脑没开机或网关没启动），这一组先没算进来。");
                 }
@@ -371,7 +374,17 @@ public class MediaSurvey {
         if (ls.blocked > 0) {
             sb.append("，另有 ").append(ls.blocked).append(" 个放不了的（曲谱图片之类）");
         }
-        if (!any) sb.append("空的");
+        if (!any) {
+            // 以前无脑接一个「空的」，结果念出来是「另有 100 个放不了的（曲谱图片之类）空的」——
+            // 而且症状最难受的地方在于：用户以为「网盘里什么都拿不到」，其实只是**停在了
+            // 一个只有曲谱图片的目录里**（实测停在「现代民谣排行榜100首」）。
+            // 这里必须把话说全：这一层没东西可播 + 怎么退出去。
+            if (ls.blocked > 0) {
+                sb.append("，这一层没有能放的，说「回到根目录」重新挑");
+            } else if (ls.dirs == 0) {
+                sb.append("空的");
+            }
+        }
         return sb.toString();
     }
 

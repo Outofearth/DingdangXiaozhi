@@ -509,12 +509,24 @@ public class NetDiskLibrary {
     public String lastError() { return lastError; }
 
     /**
+     * 网关离线（开机没开 / 网关没启动）的判定时限。
+     *
+     * <p>以前只要 {@code lastError} 非空就一直报离线，而这个字段只有**列目录成功**才会清 ——
+     * 于是启动时那一次 4 秒连接超时（电脑在息屏、网关刚被关掉、Wi-Fi 还在关联）会把整个
+     * 会话判成「网络盘连不上」，之后网关回来了也不改口（实测 10-31 16:49）。
+     */
+    private static final long OFFLINE_TTL = 90 * 1000L;
+
+    /**
      * 网关离线（开机没开 / 网关没启动）。
      *
      * 清单里必须**明说「离网」**，不能让用户以为「网盘里的歌没了」——
      * 这两件事在用户眼里差别很大（一个去开电脑，一个以为文件被删了）。
      */
-    public boolean offline() { return enabled() && lastError != null; }
+    public boolean offline() {
+        return enabled() && lastError != null
+                && System.currentTimeMillis() - failAt < OFFLINE_TTL;
+    }
 
     /* ==================== 全量索引（按名字直达） ==================== */
 
@@ -1386,6 +1398,33 @@ public class NetDiskLibrary {
             if (sc > bestScore) { bestScore = sc; best = dir; }
         }
         return bestScore >= 6 ? best : null;
+    }
+
+    /**
+     * 这句里**整名包含**了当前层的某个文件夹名 → 返回那个文件夹。
+     *
+     * <p>和 {@link #findDir} 的区别：{@code findDir} 是打分制（容错同音、缩写），
+     * 适合「打开邓紫棋」这种短指令；但在点播链路上用打分制会误伤 ——
+     * 说「播放现代民谣排行榜100首」，共享盘里的《《宋冬野》20首民谣串烧》
+     * 靠「民谣」两个字凑到命中线，结果放出来的是不相干的歌（真机实测 10-31）。
+     *
+     * <p>所以点播前先用这一条**严格**判一次：整句里必须完整包含文件夹名，
+     * 命中就进目录、不去打分。宁可进不去，也不要播错歌。
+     */
+    public Dir findDirNamed(String spoken) {
+        String s = LocalFiles.norm(spoken);
+        if (s.length() < 3) return null;
+        Listing l = cachedListing(curPath());
+        if (l == null) return null;
+        Dir best = null;
+        int bestLen = 0;
+        for (PlayItem it : l.items) {
+            if (!(it instanceof Dir)) continue;
+            String n = LocalFiles.norm(((Dir) it).name);
+            if (n.length() < 3 || n.length() <= bestLen) continue;
+            if (s.contains(n)) { bestLen = n.length(); best = (Dir) it; }
+        }
+        return best;
     }
 
     /** 当前目录里的第 idx 个条目（1 起，跨页连续）；越界返回 null。 */
